@@ -44,7 +44,7 @@ jobs:
         run: |
           $tag = "${{ github.ref_name }}"
           if (-not $tag.StartsWith("v")) { $tag = "manual" }
-          Compress-Archive -Path dist\SaveGrab\* -DestinationPath "SaveGrab_${tag}_win64.zip"
+          python build/make_release_zip.py dist\SaveGrab "SaveGrab_${tag}_win64.zip"
           Get-Item "SaveGrab_${tag}_win64.zip" | Select-Object Name, Length
 
       - name: Upload to release
