@@ -23,6 +23,13 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEST = os.path.normpath(os.path.join(HERE, "..", "vendor"))
 
+# CI（GitHub Windows runner）默认 cp1252，打印中文会崩，这里强制 UTF-8
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:  # noqa: BLE001
+        pass
+
 # 与 v0.3.0 发布时一致的版本（legendary 0.21.1 + 它的依赖）
 PACKAGES = {
     "legendary-gl": "0.21.1",
