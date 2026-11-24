@@ -32,16 +32,52 @@ MAX_WORKERS = 8
 
 # ---------------------------------------------------------------- 环境准备
 
-def app_data_dir() -> str:
-    # 允许用环境变量指定数据目录（便携模式 / 测试用）
+_DATA_DIR: str | None = None
+
+
+def _data_dir_candidates() -> list[str]:
     override = os.environ.get("SAVEGRAB_HOME")
     if override:
-        path = override
-    else:
-        base = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
-        path = os.path.join(base, APP_NAME)
-    os.makedirs(path, exist_ok=True)
-    return path
+        return [override]
+    local = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
+    roaming = os.environ.get("APPDATA") or os.path.expanduser("~")
+    temp = os.environ.get("TEMP") or os.environ.get("TMP") or os.path.expanduser("~")
+    home = os.path.expanduser("~")
+    here = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, "frozen", False) else __file__))
+    return [
+        os.path.join(local, APP_NAME),
+        os.path.join(roaming, APP_NAME),
+        os.path.join(home, f".{APP_NAME.lower()}"),
+        os.path.join(temp, APP_NAME),
+        os.path.join(here, f"{APP_NAME}-data"),
+    ]
+
+
+def app_data_dir() -> str:
+    """找一个能写的数据目录。
+
+    有些机器上安全软件会拦程序往 %LOCALAPPDATA% 写东西（报 WinError 5），
+    所以这里按顺序尝试多个位置，实在不行才报错。
+    """
+    global _DATA_DIR
+    if _DATA_DIR:
+        return _DATA_DIR
+    errors: list[str] = []
+    for path in _data_dir_candidates():
+        try:
+            os.makedirs(path, exist_ok=True)
+            probe = os.path.join(path, ".write-test")
+            with open(probe, "w", encoding="utf-8") as fh:
+                fh.write("ok")
+            os.remove(probe)
+            _DATA_DIR = path
+            return path
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"{path}  ->  {exc}")
+    raise RuntimeError(
+        "没有可写的数据目录，尝试过：\n" + "\n".join(errors)
+        + "\n\n可以把程序换个目录运行，或设置环境变量 SAVEGRAB_HOME 指向一个可写文件夹。"
+    )
 
 
 def _bootstrap() -> None:
