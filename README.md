@@ -1,5 +1,8 @@
 # SaveGrab
 
+[![Build Windows release](https://github.com/poey-xj/SaveGrab/actions/workflows/build.yml/badge.svg)](https://github.com/poey-xj/SaveGrab/actions/workflows/build.yml)
+[English](README.en.md) · [下载最新版](https://github.com/poey-xj/SaveGrab/releases/latest) · [FAQ](docs/FAQ.md)
+
 > 不用下载游戏本体，直接连 Epic 云端，把你在 Epic 买的游戏的云存档拉回本地。
 > 起因：想备份/迁移《死亡搁浅》的云存档，发现 Epic 官方启动器根本没有「导出」这个功能。
 
