@@ -41,7 +41,7 @@ from epic_core import (  # noqa: E402
     app_data_dir,
 )
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 LOGIN_URL = "https://legendary.gl/epiclogin"
 
 BG = "#16171d"
@@ -1010,11 +1010,36 @@ def main():
     try:
         app = App(demo=demo, autoshot=demo, login_shot=login_shot)
         app.mainloop()
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         import traceback
 
-        _crash_log(f"\n=== {datetime.now():%Y-%m-%d %H:%M:%S} ===\n" + traceback.format_exc())
-        raise
+        detail = traceback.format_exc()
+        _crash_log(f"\n=== {datetime.now():%Y-%m-%d %H:%M:%S} ===\n" + detail)
+        _show_fatal(exc, detail)
+        sys.exit(1)
+
+
+def _show_fatal(exc: Exception, detail: str) -> None:
+    """启动失败时给个说人话的弹窗，而不是 PyInstaller 的 traceback。"""
+    try:
+        import tkinter as tk
+        from tkinter import messagebox
+
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        messagebox.showerror(
+            "SaveGrab 启动失败",
+            f"{exc}\n\n"
+            "常见原因：安全软件拦截程序写数据目录，或文件被占用。\n"
+            "解决办法：\n"
+            "1. 把整个文件夹换到 D 盘或桌面再运行\n"
+            "2. 或用管理员身份运行一次\n"
+            "3. 详细日志见同目录下的 error.log",
+        )
+        root.destroy()
+    except Exception:  # noqa: BLE001
+        pass
 
 
 if __name__ == "__main__":
