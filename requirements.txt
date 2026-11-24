@@ -1,0 +1,10 @@
+# 运行时依赖（由 build/fetch_vendor.py 下载到 vendor/，不需要 pip 安装）
+# 这里只是记录版本，方便核对
+legendary-gl==0.21.1
+requests==2.34.2
+urllib3==2.8.0
+certifi==2026.11.20
+charset-normalizer==3.5.3
+idna==3.20
+pycryptodomex==3.24.2
+filelock==4.3.1

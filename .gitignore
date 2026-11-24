@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 运行时依赖（用 build/fetch_vendor.py 重建，别提交二进制）
+vendor/
+
+# 打包工具链
+build_tools/
+requirements-build.txt
+
+# PyInstaller 产物
+dist/
+build/SaveGrab*/
+*.spec
+
+# 发布包（放 Release，不进 git）
+*.zip
+
+# 本地测试 / 自检产物
+ecs-home/
+test-export/
+*.log
+
+# 系统文件
+Thumbs.db
+desktop.ini
+.DS_Store

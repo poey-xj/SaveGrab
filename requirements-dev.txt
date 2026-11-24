@@ -1,0 +1,4 @@
+# 开发/打包依赖（运行 main.py 本身不需要装这些，vendor/ 已包含运行时依赖）
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.10
+pillow>=10.0
